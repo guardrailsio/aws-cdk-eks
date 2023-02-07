@@ -16,7 +16,6 @@ Run the following command to verify correct installation and print the version n
 
 	cdk --version
 
-
 ### Bootstrap your AWS account
 
 Deploying stacks with the AWS CDK requires dedicated Amazon S3 buckets and other containers to be available to AWS CloudFormation during deployment. Creating these is called bootstrapping. To bootstrap, issue:
@@ -29,3 +28,20 @@ Deploying stacks with the AWS CDK requires dedicated Amazon S3 buckets and other
 	python -m venv .venv
 	source .venv/bin/activate
 	pip install -r requirements.txt
+
+
+## Deploy
+
+Edit the file `app.py` and uncomment this line:
+
+	#env=cdk.Environment(account='123456789012', region='us-east-1'),
+
+Change `account='123456789012', region='us-east-1'` with your AWS account number and target region.
+
+To generate and review the CloudFormation template, run:
+
+	cdk synth
+
+To create the CloudFormation stack and deploy the EKS cluster, run:
+
+	cdk deploy
