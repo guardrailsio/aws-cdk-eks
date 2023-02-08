@@ -9,6 +9,7 @@ class GuardrailsOnEksStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         self.stack_config = {
+            "deploy_multi_az": True,
             "vpc_cidr": "172.31.0.0/16",
             "vpc_max_azs": 2,
             "eks_nodegroup_main_instance_type": "m5a.xlarge",
@@ -25,6 +26,9 @@ class GuardrailsOnEksStack(Stack):
         except:
             pass
 
+        if not self.stack_config["deploy_multi_az"]:
+            self.stack_config["db_multi_az"] = False
+
         vpc = aws_ec2.Vpc(self, "GuardRailsVPC",
             ip_addresses=aws_ec2.IpAddresses.cidr(self.stack_config["vpc_cidr"]),
             subnet_configuration=[
@@ -32,6 +36,9 @@ class GuardrailsOnEksStack(Stack):
                 {"cidrMask": 20, "name": "app", "subnetType": aws_ec2.SubnetType.PRIVATE_WITH_EGRESS}],
             max_azs=self.stack_config["vpc_max_azs"]
         )
+
+        if not self.stack_config["deploy_multi_az"]:
+            target_az = vpc.availability_zones[0]
 
         eks = aws_eks.Cluster(self, "GuardRailsEKS",
             version=aws_eks.KubernetesVersion.V1_24,
@@ -41,11 +48,17 @@ class GuardrailsOnEksStack(Stack):
             default_capacity=0
         )
 
+        if self.stack_config["deploy_multi_az"]:
+            eks_ng_subnets = aws_ec2.SubnetSelection(subnet_type=aws_ec2.SubnetType.PRIVATE_WITH_EGRESS)
+        else:
+            eks_ng_subnets = aws_ec2.SubnetSelection(subnet_type=aws_ec2.SubnetType.PRIVATE_WITH_EGRESS, availability_zones=[target_az])
+
         eks.add_nodegroup_capacity("main",
             disk_size=self.stack_config["eks_nodegroup_main_disk_size"],
             instance_types=[aws_ec2.InstanceType(self.stack_config["eks_nodegroup_main_instance_type"])],
             max_size=self.stack_config["eks_nodegroup_main_max_size"],
-            min_size=self.stack_config["eks_nodegroup_main_min_size"]
+            min_size=self.stack_config["eks_nodegroup_main_min_size"],
+            subnets=eks_ng_subnets
         )
 
         db_sg = aws_ec2.SecurityGroup(self, "DatabaseSecurityGroup", vpc=vpc)
@@ -60,6 +73,11 @@ class GuardrailsOnEksStack(Stack):
             description="Allow connection to Postgres port within VPC"
         )
 
+        if not self.stack_config["deploy_multi_az"]:
+            db_az = target_az
+        else:
+            db_az = None
+
         db = aws_rds.DatabaseInstance(
             self, "Database",
             engine=aws_rds.DatabaseInstanceEngine.postgres(version=aws_rds.PostgresEngineVersion.VER_12_9),
@@ -69,5 +87,6 @@ class GuardrailsOnEksStack(Stack):
             instance_type=aws_ec2.InstanceType(self.stack_config["db_instance_type"]),
             allocated_storage=self.stack_config["db_storage_size"],
             storage_encrypted=True,
-            security_groups=[db_sg]
+            security_groups=[db_sg],
+            availability_zone=db_az
         )
