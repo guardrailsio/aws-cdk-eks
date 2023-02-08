@@ -45,3 +45,11 @@ To generate and review the CloudFormation template, run:
 To create the CloudFormation stack and deploy the EKS cluster, run:
 
 	cdk deploy
+
+## Stack Custom Configuration
+
+Most of the time, you may want to change the default configuration of the stack.
+You can do it by adding your configuration to the `stack_config` dict object in `app.py`.
+The default configuration is defined in `guardrails_on_eks/guardrails_on_eks_stack.py` start with `self.stack_config = {`
+
+For further customization, you can change the code of `class GuardrailsOnEksStack` or even create your own stack. Please refer to [AWS CDK Python Reference](https://docs.aws.amazon.com/cdk/api/v2/python/index.html).
