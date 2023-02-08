@@ -20,7 +20,7 @@ GuardrailsOnEksStack(app, "GuardrailsOnEksStack",
     # Uncomment the next line if you know exactly what Account and Region you
     # want to deploy the stack to. */
 
-    env=cdk.Environment(account='139078574352', region='us-west-1'),
+    #env=cdk.Environment(account='123456789012', region='us-east-1'),
     stack_config = {
         "eks_nodegroup_main_max_size": 4,
         "eks_nodegroup_main_min_size": 2,
