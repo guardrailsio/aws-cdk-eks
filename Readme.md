@@ -53,3 +53,14 @@ You can do it by adding your configuration to the `stack_config` dict object in 
 The default configuration is defined in `guardrails_on_eks/guardrails_on_eks_stack.py` start with `self.stack_config = {`
 
 For further customization, you can change the code of `class GuardrailsOnEksStack` or even create your own stack. Please refer to [AWS CDK Python Reference](https://docs.aws.amazon.com/cdk/api/v2/python/index.html).
+
+- deploy_multi_az: boolean, choose between Multi-AZ or Single-AZ deployment
+- vpc_cidr: string, VPC CIDR, this should be big enough to contain at least 1 /20 subnet and 1 /24 subnet per AZ
+- vpc_max_azs: maximum number of AZs to use in target region
+- eks_nodegroup_main_instance_type: instance type of EKS node group, recommended to be m5.large or bigger
+- eks_nodegroup_main_disk_size: disk size of instances in EKS node group
+- eks_nodegroup_main_min_size: minimum number of nodes in EKS node group
+- eks_nodegroup_main_max_size: maximum number of nodes in EKS node group
+- db_instance_type: instance type of RDS instance
+- db_storage_size: disk size of RDS instance
+- db_multi_az: boolean, deploy RDS instance with Multi-AZ or Single-AZ
