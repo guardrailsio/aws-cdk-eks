@@ -22,6 +22,7 @@ GuardrailsOnEksStack(app, "GuardrailsOnEksStack",
 
     #env=cdk.Environment(account='123456789012', region='us-east-1'),
     stack_config = {
+        "deploy_multi_az": True,
         "eks_nodegroup_main_max_size": 4,
         "eks_nodegroup_main_min_size": 2,
     }
