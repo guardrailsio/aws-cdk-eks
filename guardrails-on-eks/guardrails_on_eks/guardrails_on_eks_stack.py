@@ -1,4 +1,4 @@
-from aws_cdk import Stack, CfnJson, aws_ec2, aws_eks, aws_rds, aws_secretsmanager, aws_iam
+from aws_cdk import Stack, CfnJson, CfnOutput, aws_ec2, aws_eks, aws_rds, aws_secretsmanager, aws_iam
 from aws_cdk.lambda_layer_kubectl_v24 import KubectlV24Layer
 from constructs import Construct
 
@@ -123,3 +123,7 @@ class GuardrailsOnEksStack(Stack):
             security_groups=[db_sg],
             availability_zone=db_az
         )
+
+        CfnOutput(self, "EKSClusterName", value=eks.cluster_name)
+        CfnOutput(self, "RDSInstanceEndpoint", value=db.instance_endpoint.socket_address)
+        CfnOutput(self, "RDSGetCredentialSecretCommand", value=f"aws secretsmanager get-secret-value --secret-id {db.secret.secret_name}")
