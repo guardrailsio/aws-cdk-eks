@@ -25,6 +25,7 @@ GuardrailsOnEksStack(app, "GuardrailsOnEksStack",
         "deploy_multi_az": True,
         "eks_nodegroup_main_max_size": 4,
         "eks_nodegroup_main_min_size": 2,
+        "eks_admin_iam_role": "arn:aws:iam::changeme_aws_account_number:role/changeme_iam_role_name",
     }
 
     # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html

@@ -54,6 +54,10 @@ The default configuration is defined in `guardrails_on_eks/guardrails_on_eks_sta
 
 For further customization, you can change the code of `class GuardrailsOnEksStack` or even create your own stack. Please refer to [AWS CDK Python Reference](https://docs.aws.amazon.com/cdk/api/v2/python/index.html).
 
+### Options without default value
+- eks_admin_iam_role: The IAM Role that will be mapped to `system:masters` user in Kubernetes RBAC. AWS user who can assume this IAM Role will be able to access EKS cluster as admin.
+
+### Options with default value
 - deploy_multi_az: boolean, choose between Multi-AZ or Single-AZ deployment
 - vpc_cidr: string, VPC CIDR, this should be big enough to contain at least 1 /20 subnet and 1 /24 subnet per AZ
 - vpc_max_azs: maximum number of AZs to use in target region
