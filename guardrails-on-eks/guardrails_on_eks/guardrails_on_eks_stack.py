@@ -41,6 +41,7 @@ class GuardrailsOnEksStack(Stack):
             target_az = vpc.availability_zones[0]
 
         eks = aws_eks.Cluster(self, "GuardRailsEKS",
+            cluster_name="GuardRailsEKS",
             version=aws_eks.KubernetesVersion.V1_24,
             kubectl_layer=KubectlV24Layer(self, "kubectl"),
             vpc=vpc,
@@ -114,7 +115,7 @@ class GuardrailsOnEksStack(Stack):
         db = aws_rds.DatabaseInstance(
             self, "Database",
             engine=aws_rds.DatabaseInstanceEngine.postgres(version=aws_rds.PostgresEngineVersion.VER_12_9),
-            credentials=aws_rds.Credentials.from_generated_secret("postgres"),
+            credentials=aws_rds.Credentials.from_generated_secret("guardrails"),
             vpc=vpc,
             multi_az=self.stack_config["db_multi_az"],
             instance_type=aws_ec2.InstanceType(self.stack_config["db_instance_type"]),
