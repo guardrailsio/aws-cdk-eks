@@ -1,0 +1,1045 @@
+Resources:
+  GuardRailsVPC8A7756D9:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.31.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/Resource
+  GuardRailsVPCingressSubnet1Subnet24FECFF7:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+      AvailabilityZone: us-west-1a
+      CidrBlock: 172.31.0.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: ingress
+        - Key: aws-cdk:subnet-type
+          Value: Public
+        - Key: kubernetes.io/role/elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet1
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet1/Subnet
+  GuardRailsVPCingressSubnet1RouteTable7C52B88C:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+      Tags:
+        - Key: kubernetes.io/role/elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet1
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet1/RouteTable
+  GuardRailsVPCingressSubnet1RouteTableAssociation2A9978DD:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: GuardRailsVPCingressSubnet1RouteTable7C52B88C
+      SubnetId:
+        Ref: GuardRailsVPCingressSubnet1Subnet24FECFF7
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet1/RouteTableAssociation
+  GuardRailsVPCingressSubnet1DefaultRoute4CA6781C:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: GuardRailsVPCingressSubnet1RouteTable7C52B88C
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: GuardRailsVPCIGW5C6E792D
+    DependsOn:
+      - GuardRailsVPCVPCGW4C3E90D9
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet1/DefaultRoute
+  GuardRailsVPCingressSubnet1EIP6B17ED70:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: kubernetes.io/role/elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet1
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet1/EIP
+  GuardRailsVPCingressSubnet1NATGateway46435BD2:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      SubnetId:
+        Ref: GuardRailsVPCingressSubnet1Subnet24FECFF7
+      AllocationId:
+        Fn::GetAtt:
+          - GuardRailsVPCingressSubnet1EIP6B17ED70
+          - AllocationId
+      Tags:
+        - Key: kubernetes.io/role/elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet1
+    DependsOn:
+      - GuardRailsVPCingressSubnet1DefaultRoute4CA6781C
+      - GuardRailsVPCingressSubnet1RouteTableAssociation2A9978DD
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet1/NATGateway
+  GuardRailsVPCingressSubnet2SubnetF8BD9DF5:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+      AvailabilityZone: us-west-1c
+      CidrBlock: 172.31.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: ingress
+        - Key: aws-cdk:subnet-type
+          Value: Public
+        - Key: kubernetes.io/role/elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet2
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet2/Subnet
+  GuardRailsVPCingressSubnet2RouteTableD1FAF653:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+      Tags:
+        - Key: kubernetes.io/role/elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet2
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet2/RouteTable
+  GuardRailsVPCingressSubnet2RouteTableAssociationF4AFA528:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: GuardRailsVPCingressSubnet2RouteTableD1FAF653
+      SubnetId:
+        Ref: GuardRailsVPCingressSubnet2SubnetF8BD9DF5
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet2/RouteTableAssociation
+  GuardRailsVPCingressSubnet2DefaultRouteD4CFCE5E:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: GuardRailsVPCingressSubnet2RouteTableD1FAF653
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: GuardRailsVPCIGW5C6E792D
+    DependsOn:
+      - GuardRailsVPCVPCGW4C3E90D9
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet2/DefaultRoute
+  GuardRailsVPCingressSubnet2EIP98028762:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: kubernetes.io/role/elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet2
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet2/EIP
+  GuardRailsVPCingressSubnet2NATGateway7E5B654A:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      SubnetId:
+        Ref: GuardRailsVPCingressSubnet2SubnetF8BD9DF5
+      AllocationId:
+        Fn::GetAtt:
+          - GuardRailsVPCingressSubnet2EIP98028762
+          - AllocationId
+      Tags:
+        - Key: kubernetes.io/role/elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet2
+    DependsOn:
+      - GuardRailsVPCingressSubnet2DefaultRouteD4CFCE5E
+      - GuardRailsVPCingressSubnet2RouteTableAssociationF4AFA528
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/ingressSubnet2/NATGateway
+  GuardRailsVPCappSubnet1Subnet8CE37ECF:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+      AvailabilityZone: us-west-1a
+      CidrBlock: 172.31.16.0/20
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: app
+        - Key: aws-cdk:subnet-type
+          Value: Private
+        - Key: kubernetes.io/role/internal-elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/appSubnet1
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/appSubnet1/Subnet
+  GuardRailsVPCappSubnet1RouteTable93443897:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+      Tags:
+        - Key: kubernetes.io/role/internal-elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/appSubnet1
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/appSubnet1/RouteTable
+  GuardRailsVPCappSubnet1RouteTableAssociationE58099CA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: GuardRailsVPCappSubnet1RouteTable93443897
+      SubnetId:
+        Ref: GuardRailsVPCappSubnet1Subnet8CE37ECF
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/appSubnet1/RouteTableAssociation
+  GuardRailsVPCappSubnet1DefaultRouteC6F30071:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: GuardRailsVPCappSubnet1RouteTable93443897
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: GuardRailsVPCingressSubnet1NATGateway46435BD2
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/appSubnet1/DefaultRoute
+  GuardRailsVPCappSubnet2Subnet7DF061D6:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+      AvailabilityZone: us-west-1c
+      CidrBlock: 172.31.32.0/20
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: app
+        - Key: aws-cdk:subnet-type
+          Value: Private
+        - Key: kubernetes.io/role/internal-elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/appSubnet2
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/appSubnet2/Subnet
+  GuardRailsVPCappSubnet2RouteTable38CCB50C:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+      Tags:
+        - Key: kubernetes.io/role/internal-elb
+          Value: "1"
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC/appSubnet2
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/appSubnet2/RouteTable
+  GuardRailsVPCappSubnet2RouteTableAssociation68F2F11E:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: GuardRailsVPCappSubnet2RouteTable38CCB50C
+      SubnetId:
+        Ref: GuardRailsVPCappSubnet2Subnet7DF061D6
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/appSubnet2/RouteTableAssociation
+  GuardRailsVPCappSubnet2DefaultRouteF4F0C268:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: GuardRailsVPCappSubnet2RouteTable38CCB50C
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: GuardRailsVPCingressSubnet2NATGateway7E5B654A
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/appSubnet2/DefaultRoute
+  GuardRailsVPCIGW5C6E792D:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: GuardrailsOnEksStack/GuardRailsVPC
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/IGW
+  GuardRailsVPCVPCGW4C3E90D9:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+      InternetGatewayId:
+        Ref: GuardRailsVPCIGW5C6E792D
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsVPC/VPCGW
+  kubectl290BBFC9:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content:
+        S3Bucket: cdk-hnb659fds-assets-139078574352-us-west-1
+        S3Key: c475180f5b1bbabac165414da13a9b843b111cd3b6d5fae9c954c006640c4064.zip
+      Description: /opt/kubectl/kubectl 1.24; /opt/helm/helm 3.9
+      LicenseInfo: Apache-2.0
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/kubectl/Resource
+      aws:asset:path: asset.c475180f5b1bbabac165414da13a9b843b111cd3b6d5fae9c954c006640c4064.zip
+      aws:asset:is-bundled: false
+      aws:asset:property: Content
+  GuardRailsEKSRole450CA79C:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: eks.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKSClusterPolicy
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/Role/Resource
+  GuardRailsEKSControlPlaneSecurityGroup9673210C:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: EKS Control Plane Security Group
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/ControlPlaneSecurityGroup/Resource
+  GuardRailsEKSCreationRole6B7F2BE4:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::139078574352:root
+        Version: "2012-10-17"
+    DependsOn:
+      - GuardRailsVPCappSubnet1DefaultRouteC6F30071
+      - GuardRailsVPCappSubnet1RouteTable93443897
+      - GuardRailsVPCappSubnet1RouteTableAssociationE58099CA
+      - GuardRailsVPCappSubnet1Subnet8CE37ECF
+      - GuardRailsVPCappSubnet2DefaultRouteF4F0C268
+      - GuardRailsVPCappSubnet2RouteTable38CCB50C
+      - GuardRailsVPCappSubnet2RouteTableAssociation68F2F11E
+      - GuardRailsVPCappSubnet2Subnet7DF061D6
+      - GuardRailsVPCIGW5C6E792D
+      - GuardRailsVPCingressSubnet1DefaultRoute4CA6781C
+      - GuardRailsVPCingressSubnet1EIP6B17ED70
+      - GuardRailsVPCingressSubnet1NATGateway46435BD2
+      - GuardRailsVPCingressSubnet1RouteTable7C52B88C
+      - GuardRailsVPCingressSubnet1RouteTableAssociation2A9978DD
+      - GuardRailsVPCingressSubnet1Subnet24FECFF7
+      - GuardRailsVPCingressSubnet2DefaultRouteD4CFCE5E
+      - GuardRailsVPCingressSubnet2EIP98028762
+      - GuardRailsVPCingressSubnet2NATGateway7E5B654A
+      - GuardRailsVPCingressSubnet2RouteTableD1FAF653
+      - GuardRailsVPCingressSubnet2RouteTableAssociationF4AFA528
+      - GuardRailsVPCingressSubnet2SubnetF8BD9DF5
+      - GuardRailsVPC8A7756D9
+      - GuardRailsVPCVPCGW4C3E90D9
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/Resource/CreationRole/Resource
+  GuardRailsEKSCreationRoleDefaultPolicy56A8F7A1:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: iam:PassRole
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - GuardRailsEKSRole450CA79C
+                - Arn
+          - Action:
+              - eks:CreateCluster
+              - eks:CreateFargateProfile
+              - eks:DeleteCluster
+              - eks:DescribeCluster
+              - eks:DescribeUpdate
+              - eks:TagResource
+              - eks:UntagResource
+              - eks:UpdateClusterConfig
+              - eks:UpdateClusterVersion
+            Effect: Allow
+            Resource:
+              - arn:aws:eks:us-west-1:139078574352:cluster/GuardRailsEKS
+              - arn:aws:eks:us-west-1:139078574352:cluster/GuardRailsEKS/*
+          - Action:
+              - eks:DeleteFargateProfile
+              - eks:DescribeFargateProfile
+            Effect: Allow
+            Resource: arn:aws:eks:us-west-1:139078574352:fargateprofile/GuardRailsEKS/*
+          - Action:
+              - ec2:DescribeDhcpOptions
+              - ec2:DescribeInstances
+              - ec2:DescribeNetworkInterfaces
+              - ec2:DescribeRouteTables
+              - ec2:DescribeSecurityGroups
+              - ec2:DescribeSubnets
+              - ec2:DescribeVpcs
+              - iam:CreateServiceLinkedRole
+              - iam:GetRole
+              - iam:listAttachedRolePolicies
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: GuardRailsEKSCreationRoleDefaultPolicy56A8F7A1
+      Roles:
+        - Ref: GuardRailsEKSCreationRole6B7F2BE4
+    DependsOn:
+      - GuardRailsVPCappSubnet1DefaultRouteC6F30071
+      - GuardRailsVPCappSubnet1RouteTable93443897
+      - GuardRailsVPCappSubnet1RouteTableAssociationE58099CA
+      - GuardRailsVPCappSubnet1Subnet8CE37ECF
+      - GuardRailsVPCappSubnet2DefaultRouteF4F0C268
+      - GuardRailsVPCappSubnet2RouteTable38CCB50C
+      - GuardRailsVPCappSubnet2RouteTableAssociation68F2F11E
+      - GuardRailsVPCappSubnet2Subnet7DF061D6
+      - GuardRailsVPCIGW5C6E792D
+      - GuardRailsVPCingressSubnet1DefaultRoute4CA6781C
+      - GuardRailsVPCingressSubnet1EIP6B17ED70
+      - GuardRailsVPCingressSubnet1NATGateway46435BD2
+      - GuardRailsVPCingressSubnet1RouteTable7C52B88C
+      - GuardRailsVPCingressSubnet1RouteTableAssociation2A9978DD
+      - GuardRailsVPCingressSubnet1Subnet24FECFF7
+      - GuardRailsVPCingressSubnet2DefaultRouteD4CFCE5E
+      - GuardRailsVPCingressSubnet2EIP98028762
+      - GuardRailsVPCingressSubnet2NATGateway7E5B654A
+      - GuardRailsVPCingressSubnet2RouteTableD1FAF653
+      - GuardRailsVPCingressSubnet2RouteTableAssociationF4AFA528
+      - GuardRailsVPCingressSubnet2SubnetF8BD9DF5
+      - GuardRailsVPC8A7756D9
+      - GuardRailsVPCVPCGW4C3E90D9
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/Resource/CreationRole/DefaultPolicy/Resource
+  GuardRailsEKS57A5A858:
+    Type: Custom::AWSCDK-EKS-Cluster
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - awscdkawseksClusterResourceProviderNestedStackawscdkawseksClusterResourceProviderNestedStackResource9827C454
+          - Outputs.GuardrailsOnEksStackawscdkawseksClusterResourceProviderframeworkonEvent1BF79772Arn
+      Config:
+        name: GuardRailsEKS
+        version: "1.24"
+        roleArn:
+          Fn::GetAtt:
+            - GuardRailsEKSRole450CA79C
+            - Arn
+        resourcesVpcConfig:
+          subnetIds:
+            - Ref: GuardRailsVPCappSubnet1Subnet8CE37ECF
+            - Ref: GuardRailsVPCappSubnet2Subnet7DF061D6
+          securityGroupIds:
+            - Fn::GetAtt:
+                - GuardRailsEKSControlPlaneSecurityGroup9673210C
+                - GroupId
+          endpointPublicAccess: true
+          endpointPrivateAccess: true
+      AssumeRoleArn:
+        Fn::GetAtt:
+          - GuardRailsEKSCreationRole6B7F2BE4
+          - Arn
+      AttributesRevision: 2
+    DependsOn:
+      - GuardRailsEKSCreationRoleDefaultPolicy56A8F7A1
+      - GuardRailsEKSCreationRole6B7F2BE4
+      - GuardRailsVPCappSubnet1DefaultRouteC6F30071
+      - GuardRailsVPCappSubnet1RouteTable93443897
+      - GuardRailsVPCappSubnet1RouteTableAssociationE58099CA
+      - GuardRailsVPCappSubnet1Subnet8CE37ECF
+      - GuardRailsVPCappSubnet2DefaultRouteF4F0C268
+      - GuardRailsVPCappSubnet2RouteTable38CCB50C
+      - GuardRailsVPCappSubnet2RouteTableAssociation68F2F11E
+      - GuardRailsVPCappSubnet2Subnet7DF061D6
+      - GuardRailsVPCIGW5C6E792D
+      - GuardRailsVPCingressSubnet1DefaultRoute4CA6781C
+      - GuardRailsVPCingressSubnet1EIP6B17ED70
+      - GuardRailsVPCingressSubnet1NATGateway46435BD2
+      - GuardRailsVPCingressSubnet1RouteTable7C52B88C
+      - GuardRailsVPCingressSubnet1RouteTableAssociation2A9978DD
+      - GuardRailsVPCingressSubnet1Subnet24FECFF7
+      - GuardRailsVPCingressSubnet2DefaultRouteD4CFCE5E
+      - GuardRailsVPCingressSubnet2EIP98028762
+      - GuardRailsVPCingressSubnet2NATGateway7E5B654A
+      - GuardRailsVPCingressSubnet2RouteTableD1FAF653
+      - GuardRailsVPCingressSubnet2RouteTableAssociationF4AFA528
+      - GuardRailsVPCingressSubnet2SubnetF8BD9DF5
+      - GuardRailsVPC8A7756D9
+      - GuardRailsVPCVPCGW4C3E90D9
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/Resource/Resource/Default
+  GuardRailsEKSKubectlReadyBarrierA8679F63:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Value: aws:cdk:eks:kubectl-ready
+    DependsOn:
+      - GuardRailsEKSCreationRoleDefaultPolicy56A8F7A1
+      - GuardRailsEKSCreationRole6B7F2BE4
+      - GuardRailsEKS57A5A858
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/KubectlReadyBarrier
+  GuardRailsEKSMastersRole097F10A4:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::139078574352:root
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/MastersRole/Resource
+  GuardRailsEKSAwsAuthmanifest126DEDD6:
+    Type: Custom::AWSCDK-EKS-KubernetesResource
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - awscdkawseksKubectlProviderNestedStackawscdkawseksKubectlProviderNestedStackResourceA7AEBA6B
+          - Outputs.GuardrailsOnEksStackawscdkawseksKubectlProviderframeworkonEvent733334EDArn
+      Manifest:
+        Fn::Join:
+          - ""
+          - - '[{"apiVersion":"v1","kind":"ConfigMap","metadata":{"name":"aws-auth","namespace":"kube-system","labels":{"aws.cdk.eks/prune-c8e541f6819c7e3e58b8a888792376bb487e6e141c":""}},"data":{"mapRoles":"[{\"rolearn\":\"'
+            - Fn::GetAtt:
+                - GuardRailsEKSMastersRole097F10A4
+                - Arn
+            - \",\"username\":\"
+            - Fn::GetAtt:
+                - GuardRailsEKSMastersRole097F10A4
+                - Arn
+            - \",\"groups\":[\"system:masters\"]},{\"rolearn\":\"
+            - Fn::GetAtt:
+                - GuardRailsEKSNodegroupmainNodeGroupRoleA33F6077
+                - Arn
+            - \",\"username\":\"system:node:{{EC2PrivateDNSName}}\",\"groups\":[\"system:bootstrappers\",\"system:nodes\"]}]","mapUsers":"[]","mapAccounts":"[]"}}]
+      ClusterName:
+        Ref: GuardRailsEKS57A5A858
+      RoleArn:
+        Fn::GetAtt:
+          - GuardRailsEKSCreationRole6B7F2BE4
+          - Arn
+      PruneLabel: aws.cdk.eks/prune-c8e541f6819c7e3e58b8a888792376bb487e6e141c
+      Overwrite: true
+    DependsOn:
+      - GuardRailsEKSKubectlReadyBarrierA8679F63
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/AwsAuth/manifest/Resource/Default
+  GuardRailsEKSNodegroupmainNodeGroupRoleA33F6077:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKS_CNI_Policy
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/Nodegroupmain/NodeGroupRole/Resource
+  GuardRailsEKSNodegroupmain536F4373:
+    Type: AWS::EKS::Nodegroup
+    Properties:
+      ClusterName:
+        Ref: GuardRailsEKS57A5A858
+      NodeRole:
+        Fn::GetAtt:
+          - GuardRailsEKSNodegroupmainNodeGroupRoleA33F6077
+          - Arn
+      Subnets:
+        - Ref: GuardRailsVPCappSubnet1Subnet8CE37ECF
+        - Ref: GuardRailsVPCappSubnet2Subnet7DF061D6
+      AmiType: AL2_x86_64
+      DiskSize: 50
+      ForceUpdateEnabled: true
+      InstanceTypes:
+        - m5a.xlarge
+      ScalingConfig:
+        DesiredSize: 2
+        MaxSize: 4
+        MinSize: 2
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/Nodegroupmain/Resource
+  GuardRailsEKSOpenIdConnectProviderE3CE7150:
+    Type: Custom::AWSCDKOpenIdConnectProvider
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CustomAWSCDKOpenIdConnectProviderCustomResourceProviderHandlerF2C543E0
+          - Arn
+      ClientIDList:
+        - sts.amazonaws.com
+      Url:
+        Fn::GetAtt:
+          - GuardRailsEKS57A5A858
+          - OpenIdConnectIssuerUrl
+      CodeHash: 2f66f19d22493bb970ab7d0e10dab28b63e97d1ad344b1ed6dd9696c15c05a6c
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/GuardRailsEKS/OpenIdConnectProvider/Resource/Default
+  awscdkawseksClusterResourceProviderNestedStackawscdkawseksClusterResourceProviderNestedStackResource9827C454:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL:
+        Fn::Join:
+          - ""
+          - - https://s3.us-west-1.
+            - Ref: AWS::URLSuffix
+            - /cdk-hnb659fds-assets-139078574352-us-west-1/2a5f736222de3115c8c9755e16e272eb3438522cd7f614b25b99a856a5432283.json
+      Parameters:
+        referencetoGuardrailsOnEksStackGuardRailsEKSCreationRole8F0516F3Arn:
+          Fn::GetAtt:
+            - GuardRailsEKSCreationRole6B7F2BE4
+            - Arn
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/@aws-cdk--aws-eks.ClusterResourceProvider.NestedStack/@aws-cdk--aws-eks.ClusterResourceProvider.NestedStackResource
+      aws:asset:path: GuardrailsOnEksStackawscdkawseksClusterResourceProviderA203FE02.nested.template.json
+      aws:asset:property: TemplateURL
+  awscdkawseksKubectlProviderNestedStackawscdkawseksKubectlProviderNestedStackResourceA7AEBA6B:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL:
+        Fn::Join:
+          - ""
+          - - https://s3.us-west-1.
+            - Ref: AWS::URLSuffix
+            - /cdk-hnb659fds-assets-139078574352-us-west-1/b9df85a99debbb8bff709e06b41da26aaa703b82db22e6d218036fb1f80feb96.json
+      Parameters:
+        referencetoGuardrailsOnEksStackGuardRailsEKS4D724F86Arn:
+          Fn::GetAtt:
+            - GuardRailsEKS57A5A858
+            - Arn
+        referencetoGuardrailsOnEksStackGuardRailsEKSCreationRole8F0516F3Arn:
+          Fn::GetAtt:
+            - GuardRailsEKSCreationRole6B7F2BE4
+            - Arn
+        referencetoGuardrailsOnEksStackkubectlF287BBAARef:
+          Ref: kubectl290BBFC9
+        referencetoGuardrailsOnEksStackGuardRailsVPCappSubnet1Subnet1350EFF0Ref:
+          Ref: GuardRailsVPCappSubnet1Subnet8CE37ECF
+        referencetoGuardrailsOnEksStackGuardRailsVPCappSubnet2Subnet793F900ERef:
+          Ref: GuardRailsVPCappSubnet2Subnet7DF061D6
+        referencetoGuardrailsOnEksStackGuardRailsEKS4D724F86ClusterSecurityGroupId:
+          Fn::GetAtt:
+            - GuardRailsEKS57A5A858
+            - ClusterSecurityGroupId
+    DependsOn:
+      - GuardRailsVPCappSubnet1DefaultRouteC6F30071
+      - GuardRailsVPCappSubnet1RouteTableAssociationE58099CA
+      - GuardRailsVPCappSubnet2DefaultRouteF4F0C268
+      - GuardRailsVPCappSubnet2RouteTableAssociation68F2F11E
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/@aws-cdk--aws-eks.KubectlProvider.NestedStack/@aws-cdk--aws-eks.KubectlProvider.NestedStackResource
+      aws:asset:path: GuardrailsOnEksStackawscdkawseksKubectlProvider6FB88BE4.nested.template.json
+      aws:asset:property: TemplateURL
+  EKSAwsAuthmanifestDA7F062B:
+    Type: Custom::AWSCDK-EKS-KubernetesResource
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - awscdkawseksKubectlProviderNestedStackawscdkawseksKubectlProviderNestedStackResourceA7AEBA6B
+          - Outputs.GuardrailsOnEksStackawscdkawseksKubectlProviderframeworkonEvent733334EDArn
+      Manifest:
+        Fn::Join:
+          - ""
+          - - '[{"apiVersion":"v1","kind":"ConfigMap","metadata":{"name":"aws-auth","namespace":"kube-system","labels":{"aws.cdk.eks/prune-c8df8749f55b5c9fee1c49e611b22f46c685cf36e4":""}},"data":{"mapRoles":"[{\"rolearn\":\"arn:aws:iam::139078574352:role/AWSReservedSSO_AWSAdministratorAccess_8172ee885d1982e4\",\"username\":\"sso:admin\",\"groups\":[\"system:masters\"]},{\"rolearn\":\"'
+            - Fn::GetAtt:
+                - GuardRailsEKSNodegroupmainNodeGroupRoleA33F6077
+                - Arn
+            - \",\"username\":\"system:node:{{EC2PrivateDNSName}}\",\"groups\":[\"system:bootstrappers\",\"system:nodes\"]}]","mapUsers":"[]","mapAccounts":"[]"}}]
+      ClusterName:
+        Ref: GuardRailsEKS57A5A858
+      RoleArn:
+        Fn::GetAtt:
+          - GuardRailsEKSCreationRole6B7F2BE4
+          - Arn
+      PruneLabel: aws.cdk.eks/prune-c8df8749f55b5c9fee1c49e611b22f46c685cf36e4
+      Overwrite: true
+    DependsOn:
+      - GuardRailsEKSKubectlReadyBarrierA8679F63
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/EKSAwsAuth/manifest/Resource/Default
+  EKSAddonVPCCNI:
+    Type: AWS::EKS::Addon
+    Properties:
+      AddonName: vpc-cni
+      ClusterName:
+        Ref: GuardRailsEKS57A5A858
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/EKSAddonVPCCNI
+  EKSAddonCoreDNS:
+    Type: AWS::EKS::Addon
+    Properties:
+      AddonName: coredns
+      ClusterName:
+        Ref: GuardRailsEKS57A5A858
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/EKSAddonCoreDNS
+  CustomAWSCDKOpenIdConnectProviderCustomResourceProviderRole517FED65:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+      ManagedPolicyArns:
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: Inline
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Resource: "*"
+                Action:
+                  - iam:CreateOpenIDConnectProvider
+                  - iam:DeleteOpenIDConnectProvider
+                  - iam:UpdateOpenIDConnectProviderThumbprint
+                  - iam:AddClientIDToOpenIDConnectProvider
+                  - iam:RemoveClientIDFromOpenIDConnectProvider
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Role
+  CustomAWSCDKOpenIdConnectProviderCustomResourceProviderHandlerF2C543E0:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-139078574352-us-west-1
+        S3Key: 2f66f19d22493bb970ab7d0e10dab28b63e97d1ad344b1ed6dd9696c15c05a6c.zip
+      Timeout: 900
+      MemorySize: 128
+      Handler: __entrypoint__.handler
+      Role:
+        Fn::GetAtt:
+          - CustomAWSCDKOpenIdConnectProviderCustomResourceProviderRole517FED65
+          - Arn
+      Runtime: nodejs16.x
+    DependsOn:
+      - CustomAWSCDKOpenIdConnectProviderCustomResourceProviderRole517FED65
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Handler
+      aws:asset:path: asset.2f66f19d22493bb970ab7d0e10dab28b63e97d1ad344b1ed6dd9696c15c05a6c
+      aws:asset:property: Code
+  ConditionJson7698FD65:
+    Type: Custom::AWSCDKCfnJson
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - AWSCDKCfnUtilsProviderCustomResourceProviderHandlerCF82AA57
+          - Arn
+      Value:
+        Fn::Join:
+          - ""
+          - - '{"'
+            - Fn::GetAtt:
+                - GuardRailsEKS57A5A858
+                - OpenIdConnectIssuer
+            - :sub":"system:serviceaccount:kube-system:ebs-csi-controller-sa","
+            - Fn::GetAtt:
+                - GuardRailsEKS57A5A858
+                - OpenIdConnectIssuer
+            - :aud":"sts.amazonaws.com"}
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/ConditionJson/Resource/Default
+  AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+      ManagedPolicyArns:
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/AWSCDKCfnUtilsProviderCustomResourceProvider/Role
+  AWSCDKCfnUtilsProviderCustomResourceProviderHandlerCF82AA57:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-139078574352-us-west-1
+        S3Key: 6c469f35da6ab121a965268d959faff91c021ab5d46ac363f98648bef832377d.zip
+      Timeout: 900
+      MemorySize: 128
+      Handler: __entrypoint__.handler
+      Role:
+        Fn::GetAtt:
+          - AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867
+          - Arn
+      Runtime: nodejs14.x
+    DependsOn:
+      - AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/AWSCDKCfnUtilsProviderCustomResourceProvider/Handler
+      aws:asset:path: asset.6c469f35da6ab121a965268d959faff91c021ab5d46ac363f98648bef832377d
+      aws:asset:property: Code
+  EBSCSIRole61282D3E:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                Fn::GetAtt:
+                  - ConditionJson7698FD65
+                  - Value
+            Effect: Allow
+            Principal:
+              Federated:
+                Ref: GuardRailsEKSOpenIdConnectProviderE3CE7150
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/EBSCSIRole/Resource
+  EKSAddonCSIDriver:
+    Type: AWS::EKS::Addon
+    Properties:
+      AddonName: aws-ebs-csi-driver
+      ClusterName:
+        Ref: GuardRailsEKS57A5A858
+      ServiceAccountRoleArn:
+        Fn::GetAtt:
+          - EBSCSIRole61282D3E
+          - Arn
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/EKSAddonCSIDriver
+  DatabaseSecurityGroup7319C0F6:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: GuardrailsOnEksStack/DatabaseSecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      SecurityGroupIngress:
+        - CidrIp: 172.31.0.0/16
+          Description: Allow connection to Postgres port within VPC
+          FromPort: 5432
+          IpProtocol: tcp
+          ToPort: 5432
+      VpcId:
+        Ref: GuardRailsVPC8A7756D9
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/DatabaseSecurityGroup/Resource
+  DatabaseSubnetGroup7D60F180:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for Database database
+      SubnetIds:
+        - Ref: GuardRailsVPCappSubnet1Subnet8CE37ECF
+        - Ref: GuardRailsVPCappSubnet2Subnet7DF061D6
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/Database/SubnetGroup/Default
+  GuardrailsOnEksStackDatabaseSecret7E16CED03fdaad7efa858a3daf9490cf0a702aeb:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description:
+        Fn::Join:
+          - ""
+          - - "Generated by the CDK for stack: "
+            - Ref: AWS::StackName
+      GenerateSecretString:
+        ExcludeCharacters: " %+~`#$&*()|[]{}:;<>?!'/@\"\\"
+        GenerateStringKey: password
+        PasswordLength: 30
+        SecretStringTemplate: '{"username":"guardrails"}'
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/Database/Secret/Resource
+  DatabaseSecretAttachmentE5D1B020:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId:
+        Ref: GuardrailsOnEksStackDatabaseSecret7E16CED03fdaad7efa858a3daf9490cf0a702aeb
+      TargetId:
+        Ref: DatabaseB269D8BB
+      TargetType: AWS::RDS::DBInstance
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/Database/Secret/Attachment/Resource
+  DatabaseB269D8BB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: "50"
+      CopyTagsToSnapshot: true
+      DBInstanceClass: db.m5.large
+      DBSubnetGroupName:
+        Ref: DatabaseSubnetGroup7D60F180
+      Engine: postgres
+      EngineVersion: "12.9"
+      MasterUsername: guardrails
+      MasterUserPassword:
+        Fn::Join:
+          - ""
+          - - "{{resolve:secretsmanager:"
+            - Ref: GuardrailsOnEksStackDatabaseSecret7E16CED03fdaad7efa858a3daf9490cf0a702aeb
+            - :SecretString:password::}}
+      MultiAZ: true
+      StorageEncrypted: true
+      StorageType: gp2
+      VPCSecurityGroups:
+        - Fn::GetAtt:
+            - DatabaseSecurityGroup7319C0F6
+            - GroupId
+    UpdateReplacePolicy: Snapshot
+    DeletionPolicy: Snapshot
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/Database/Resource
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Analytics: v2:deflate64:H4sIAAAAAAAA/11SXW/jIBD8LXnHNJf2vt7qOFWV611rJVVeqzXeOtQ2RLAkiiz/98PQxL572mEYYHaWBe++zfl8BiebiLJOGlnwbksgauaptw7Fgne7g2DZu9rlGctd0UixdYVCGrgRbbQjfIWiwZEfudRaLSSQ1OoqHsDDOh/KM9AjEJ7gzHIjjx6OF68VofH4IohOPlcpea/7FhWxLQpnJJ0fjXaH4GFK9MzevoG1SJanQ/FrvnSiRlqCRdZAW5TA/bHfcEazQ2MHr1hb3mWNs94DS082dbRnT64IjtD+ASXf0RJ71iVWl4fHxcsB1brMtFIoKDf6KEt/j5ekZalVzyS0vNvomFmoufb5hiYj6pkpvYUVEBTe51pZAiWQxXyuva6WU+Ki9gmYGOJqeTnpgwisbUFBhca3F6IahLG8gqmQJsleBf/v9D3boNXOeEMhVP9zKqkqlvnAdHvdG5qb4BdHBxevDT/tX/U0pl92SGnOv/+Y3X9+0Zs4qaQZxpTUfhSCmuS4uONPEe8Wd2GEPcvPtNfq5pb/5F++zj6slIlximSLfBPrX1BGSpv/AgAA
+    Metadata:
+      aws:cdk:path: GuardrailsOnEksStack/CDKMetadata/Default
+Outputs:
+  GuardRailsEKSConfigCommand9A4F1FD9:
+    Value:
+      Fn::Join:
+        - ""
+        - - "aws eks update-kubeconfig --name "
+          - Ref: GuardRailsEKS57A5A858
+          - " --region us-west-1 --role-arn "
+          - Fn::GetAtt:
+              - GuardRailsEKSMastersRole097F10A4
+              - Arn
+  GuardRailsEKSGetTokenCommand15ADAD9E:
+    Value:
+      Fn::Join:
+        - ""
+        - - "aws eks get-token --cluster-name "
+          - Ref: GuardRailsEKS57A5A858
+          - " --region us-west-1 --role-arn "
+          - Fn::GetAtt:
+              - GuardRailsEKSMastersRole097F10A4
+              - Arn
+  EKSClusterName:
+    Value:
+      Ref: GuardRailsEKS57A5A858
+  RDSInstanceEndpoint:
+    Value:
+      Fn::Join:
+        - ""
+        - - Fn::GetAtt:
+              - DatabaseB269D8BB
+              - Endpoint.Address
+          - ":"
+          - Fn::GetAtt:
+              - DatabaseB269D8BB
+              - Endpoint.Port
+  RDSGetCredentialSecretCommand:
+    Value:
+      Fn::Join:
+        - ""
+        - - "aws secretsmanager get-secret-value --secret-id "
+          - Fn::Join:
+              - "-"
+              - - Fn::Select:
+                    - 0
+                    - Fn::Split:
+                        - "-"
+                        - Fn::Select:
+                            - 6
+                            - Fn::Split:
+                                - ":"
+                                - Ref: GuardrailsOnEksStackDatabaseSecret7E16CED03fdaad7efa858a3daf9490cf0a702aeb
+                - Fn::Select:
+                    - 1
+                    - Fn::Split:
+                        - "-"
+                        - Fn::Select:
+                            - 6
+                            - Fn::Split:
+                                - ":"
+                                - Ref: GuardrailsOnEksStackDatabaseSecret7E16CED03fdaad7efa858a3daf9490cf0a702aeb
+Parameters:
+  BootstrapVersion:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /cdk-bootstrap/hnb659fds/version
+    Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
+Rules:
+  CheckBootstrapVersion:
+    Assertions:
+      - Assert:
+          Fn::Not:
+            - Fn::Contains:
+                - - "1"
+                  - "2"
+                  - "3"
+                  - "4"
+                  - "5"
+                - Ref: BootstrapVersion
+        AssertDescription: CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.
+
