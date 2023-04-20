@@ -1,4 +1,4 @@
-from aws_cdk import Stack, CfnJson, CfnOutput, aws_ec2, aws_eks, aws_rds, aws_secretsmanager, aws_iam
+from aws_cdk import Stack, CfnJson, CfnOutput, aws_ec2, aws_eks, aws_rds, aws_secretsmanager, aws_iam, aws_kms
 from aws_cdk.lambda_layer_kubectl_v24 import KubectlV24Layer
 from constructs import Construct
 
@@ -40,12 +40,14 @@ class GuardrailsOnEksStack(Stack):
         if not self.stack_config["deploy_multi_az"]:
             target_az = vpc.availability_zones[0]
 
+        eks_encrypt_key = aws_kms.Key(self, "EKSEncryptKey", enable_key_rotation=True)
         eks = aws_eks.Cluster(self, "GuardRailsEKS",
             cluster_name="GuardRailsEKS",
             version=aws_eks.KubernetesVersion.V1_24,
             kubectl_layer=KubectlV24Layer(self, "kubectl"),
             vpc=vpc,
             vpc_subnets=[aws_ec2.SubnetSelection(subnet_type=aws_ec2.SubnetType.PRIVATE_WITH_EGRESS)],
+            secrets_encryption_key=eks_encrypt_key,
             default_capacity=0
         )
 
